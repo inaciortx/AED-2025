@@ -6,6 +6,7 @@
 int Menu( void *buffer );
 void* Add_People( void *buffer);
 void List_All( void *buffer);
+void* Search( void *buffer );
 
 
 int main () {
@@ -33,7 +34,7 @@ int main () {
                 printf("remover\n");
                 break;
             case 3:
-                printf("buscar\n");
+                pBuffer = Search( pBuffer );
                 break;
             case 4:
                 List_All( pBuffer);
@@ -148,3 +149,62 @@ void List_All( void *buffer ) {
     
     *pCount = 0;
 }
+
+void* Search( void *buffer ) {
+
+    //Recuperar tamanho do Buffer 
+    int *pBufferSize = ( int *)( ( char *) buffer + 2 * sizeof(int) );
+
+    buffer = realloc(buffer, *pBufferSize + sizeof(char) * 50 );
+    pBufferSize = ( int *)( ( char *) buffer + 2 * sizeof(int) );
+
+    int *pPeopleAmount = (int *)((char *)buffer + sizeof(int));
+    int *pCount = (int *) buffer;
+    *pCount = 0;
+
+    char *pSearched = ( char *) buffer + *pBufferSize;
+    printf("  Pesquisa (NOME): ");
+    scanf(" %50[^\n]", pSearched);
+   
+    char *pData = (char *) buffer + (3 * sizeof(int)); // aponta pro primeiro dado após meus contadores 
+    
+    while ( *pCount < *pPeopleAmount ) {
+
+        int *pNameSize = (int *) pData;
+        pData += sizeof(int);
+
+        char *pName = pData;
+        pData += (*pNameSize + 1);
+        
+        int *pAge = (int *) pData;
+        pData += sizeof(int);
+
+        int *pEmailSize = (int *) pData;
+        pData += sizeof(int);
+
+        char *pEmail = pData;
+        pData += (*pEmailSize + 1);
+
+        if ( strcmp(pName, pSearched) == 0 ){
+          
+            printf("==================\n");
+            printf("    Pessoa Encontrada!\n");
+            printf("Nome: %s\n", pName);
+            printf("Idade: %d\n", *pAge);
+            printf("E-Mail: %s\n", pEmail);
+            printf("==================");
+
+            *pCount = 0;
+            buffer = realloc(buffer, *pBufferSize);
+            return buffer;
+        }
+        (*pCount)++;
+    }
+    printf("Pessoa nao encontrada!");
+
+    *pCount = 0;
+    buffer = realloc(buffer, *pBufferSize);
+    return buffer;
+}       
+
+    
