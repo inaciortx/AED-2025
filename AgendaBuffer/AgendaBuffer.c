@@ -78,8 +78,7 @@ void * Add_People( void *buffer ) {
     // Insere nome no Buffer
     char *pName = (char *) buffer +  (*pBufferSize );
     printf("   Nome: ");
-    fgets(pName, 50, stdin);
-    pName[strcspn(pName, "\n")] = '\0';
+    scanf(" %99[^\n]%*c", pName);
 
     // Arruma os valores do Buffer
     *pNameSize = strlen(pName);
