@@ -7,6 +7,7 @@ int Menu( void *buffer );
 void* Add_People( void *buffer);
 void List_All( void *buffer);
 void* Search( void *buffer );
+void* Remove_People( void *buffer );
 
 
 int main () {
@@ -31,7 +32,7 @@ int main () {
                 pBuffer = Add_People( pBuffer );
                 break;
             case 2:
-                printf("remover\n");
+                pBuffer = Remove_People( pBuffer );
                 break;
             case 3:
                 pBuffer = Search( pBuffer );
@@ -42,6 +43,7 @@ int main () {
 
         }
     }
+    free(pBuffer);
     printf("\nSaindo...\n");
 }
 
@@ -62,7 +64,7 @@ void * Add_People( void *buffer ) {
     int *pBufferSize = ( int *)( ( char *) buffer + 2 * sizeof(int) );
  
     //Aloca memória para mais uma pessoa no Buffer
-    buffer = realloc ( buffer, *pBufferSize + (sizeof(char) * 100) + (sizeof(int) * 3) );
+    buffer = realloc ( buffer, *pBufferSize + (sizeof(char) * 200) + (sizeof(int) * 3) );
     pBufferSize = ( int *)( ( char *) buffer + 2 * sizeof(int) );
     
     // Incrementa uma nova pessoa no contador
@@ -76,7 +78,7 @@ void * Add_People( void *buffer ) {
     // Insere nome no Buffer
     char *pName = (char *) buffer +  (*pBufferSize );
     printf("   Nome: ");
-    scanf(" %49[^\n]", pName);
+    scanf(" %99[^\n]%*c", pName);
 
     // Arruma os valores do Buffer
     *pNameSize = strlen(pName);
@@ -84,8 +86,8 @@ void * Add_People( void *buffer ) {
 
     // Insere a idade no Buffer
     int *pAge = (int *) ( (char *) buffer + (*pBufferSize ) );
-    printf("   Idade:");
-    scanf("%d", pAge);
+    printf("   Idade: ");
+    scanf("%d%*c", pAge);
     *pBufferSize += sizeof(int);
 
     //Separa um espaço para o tamanho do email
@@ -96,7 +98,7 @@ void * Add_People( void *buffer ) {
      // Insere email no Buffer
     char *pEmail = (char *) buffer +  (*pBufferSize );
     printf("   E-Mail: ");
-    scanf("%s", pEmail);
+    scanf(" %99[^\n]%*c", pEmail);
 
     // Arruma os valores do Buffer
     *pEmailSize = strlen(pEmail);
@@ -164,7 +166,7 @@ void* Search( void *buffer ) {
 
     char *pSearched = ( char *) buffer + *pBufferSize;
     printf("  Pesquisa (NOME): ");
-    scanf(" %50[^\n]", pSearched);
+    scanf(" %49[^\n]", pSearched);
    
     char *pData = (char *) buffer + (3 * sizeof(int)); // aponta pro primeiro dado após meus contadores 
     
@@ -187,12 +189,12 @@ void* Search( void *buffer ) {
 
         if ( strcmp(pName, pSearched) == 0 ){
           
-            printf("==================\n");
+            printf("\n==================\n");
             printf("    Pessoa Encontrada!\n");
             printf("Nome: %s\n", pName);
             printf("Idade: %d\n", *pAge);
             printf("E-Mail: %s\n", pEmail);
-            printf("==================");
+            printf("==================\n");
 
             *pCount = 0;
             buffer = realloc(buffer, *pBufferSize);
@@ -207,4 +209,61 @@ void* Search( void *buffer ) {
     return buffer;
 }       
 
+void* Remove_People( void *buffer ){ 
+
+int *pBufferSize = ( int *)( ( char *) buffer + 2 * sizeof(int) );
+
+buffer = realloc(buffer, *pBufferSize + sizeof(char) * 54 );
+pBufferSize = ( int *)( ( char *) buffer + 2 * sizeof(int) );
+
+
+int *pPeopleAmount = (int *)((char *)buffer + sizeof(int));
+int *pCount = (int *) buffer;
+*pCount = 0;
+
+char *pRemoved = ( char *) buffer + *pBufferSize;
+printf("  Remover (NOME): ");
+scanf(" %50[^\n]", pRemoved);
+
+char *pData = (char *) buffer + (3 * sizeof(int));
+char *pPreviousData = (char *) buffer + (3 * sizeof(int));
+
+ while ( *pCount < *pPeopleAmount ) {
+
+        pPreviousData = (char *)pData;
+
+        int *pNameSize = (int *) pData;
+        pData += sizeof(int);
+        char *pName = pData;
+        pData += (*pNameSize + 1);
+
+        pData += sizeof(int);
+
+        int *pEmailSize = (int *) pData;
+        pData += sizeof(int);
+        pData += (*pEmailSize + 1);
+
+        if ( strcmp(pName, pRemoved) == 0 ){
+       
+            *pCount = (sizeof(int) + (*pNameSize + 1) + sizeof(int) + sizeof(int) + (*pEmailSize + 1));
+
+            memmove((void *)pPreviousData, (void *)pData, ((char *)buffer + *pBufferSize) - (char *)pData);
+
+            (*pPeopleAmount)--;
+            *pBufferSize -= *pCount;
+
+            buffer = realloc(buffer, *pBufferSize );
+            *pCount = 0;
+            printf("Pessoa removida com sucesso!");
+            return buffer;
+            
+        }
+        (*pCount)++;
+}
+    printf(" Nome nao encontrado!");
+    buffer = realloc(buffer, *pBufferSize );
+    *pCount = 0;
+    return buffer;
+}
+ 
     
