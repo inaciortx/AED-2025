@@ -78,7 +78,8 @@ void * Add_People( void *buffer ) {
     // Insere nome no Buffer
     char *pName = (char *) buffer +  (*pBufferSize );
     printf("   Nome: ");
-    scanf(" %99[^\n]%*c", pName);
+    fgets(pName, 50, stdin);
+    pName[strcspn(pName, "\n")] = '\0';
 
     // Arruma os valores do Buffer
     *pNameSize = strlen(pName);
@@ -138,12 +139,12 @@ void List_All( void *buffer ) {
         char *pEmail = pData;
         pData += (*pEmailSize + 1);
 
-        printf("==================\n");
+        printf("====================\n");
         printf("    Pessoa %d\n", *pCount);
         printf("Nome: %s\n", pName);
         printf("Idade: %d\n", *pAge);
         printf("E-Mail: %s\n", pEmail);
-        printf("==================");
+        printf("====================\n");
         
         (*pCount)++;
         
