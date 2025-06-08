@@ -42,6 +42,11 @@ int main () {
                 break;
 
         }
+
+        pMenu = (int *)pBuffer;
+        pPeopleAmount = (int *)((char *)pBuffer + sizeof(int));
+        pBufferSize = (int *)((char *)pBuffer + 2 * sizeof(int));
+
     }
     free(pBuffer);
     printf("\nSaindo...\n");
@@ -65,52 +70,51 @@ int Menu( void *buffer ) {
 
 void * Add_People( void *buffer ) {
 
-    //Recuperar tamanho do Buffer 
+    
     int *pBufferSize = ( int *)( ( char *) buffer + 2 * sizeof(int) );
    
-    //Aloca memória para mais uma pessoa no Buffer
     buffer = realloc ( buffer, *pBufferSize + (sizeof(char) * 200) + (sizeof(int) * 3) );
+    if ( !buffer ) {
+        printf(" \n ERRO DE ALOCACAO \n");
+        exit(1);
+    }
     pBufferSize = ( int *)( ( char *) buffer + 2 * sizeof(int) );
-    
-    // Incrementa uma nova pessoa no contador
+
     int *pPeopleAmount = ( int * )((char *)buffer + sizeof(int));
     (*pPeopleAmount)++;
 
-    //Separa um espaço para o tamanho do nome
+    
     int *pNameSize = (int*)( (char *) buffer + (*pBufferSize) );
     *pBufferSize += sizeof(int);
 
-    // Insere nome no Buffer
     char *pName = (char *) buffer +  (*pBufferSize );
     printf("   Nome: ");
     scanf(" %99[^\n]%*c", pName);
 
-    // Arruma os valores do Buffer
     *pNameSize = strlen(pName);
     *pBufferSize += (*pNameSize + 1);
 
-    // Insere a idade no Buffer
     int *pAge = (int *) ( (char *) buffer + (*pBufferSize ) );
     printf("   Idade: ");
     scanf("%d%*c", pAge);
     *pBufferSize += sizeof(int);
 
-    //Separa um espaço para o tamanho do email
     int *pEmailSize = (int*)( (char *) buffer + (*pBufferSize)  );
     *pBufferSize += sizeof(int);
 
-
-     // Insere email no Buffer
     char *pEmail = (char *) buffer +  (*pBufferSize );
     printf("   E-Mail: ");
     scanf(" %99[^\n]%*c", pEmail);
 
-    // Arruma os valores do Buffer
     *pEmailSize = strlen(pEmail);
     *pBufferSize += (*pEmailSize + 1);
 
-    //Reajusta a memória que sobrou
     buffer = realloc( buffer, *pBufferSize );
+    if ( !buffer ) {
+        printf(" \n ERRO DE ALOCACAO \n");
+        exit(1);
+    }
+    pBufferSize = (int *)((char *)buffer + 2 * sizeof(int));
     
 
     return buffer;
@@ -125,12 +129,11 @@ void List_All( void *buffer ) {
         return;
     }
 
-    //Recuperar o número de pessoas e usar meu inteiro coringa como contador
     int *pPeopleAmount = (int *)((char *)buffer + sizeof(int));
     int *pCount = (int *) buffer;
     *pCount = 1;
 
-    char *pData = (char *) buffer + (3 * sizeof(int)); // aponta pro primeiro dado após meus contadores 
+    char *pData = (char *) buffer + (3 * sizeof(int));  
     
     while ( *pCount <= *pPeopleAmount ){
 
@@ -164,8 +167,7 @@ void List_All( void *buffer ) {
 }
 
 void* Search( void *buffer ) {
-
-    //Recuperar tamanho do Buffer 
+ 
     int *pBufferSize = ( int *)( ( char *) buffer + 2 * sizeof(int) );
     if ( *pBufferSize == (sizeof(int) * 3 ) ) {
         printf("\n  **AGENDA VAZIA**\n" );
@@ -173,6 +175,10 @@ void* Search( void *buffer ) {
     }
 
     buffer = realloc(buffer, *pBufferSize + sizeof(char) * 50 );
+    if ( !buffer ) {
+        printf(" \n ERRO DE ALOCACAO \n");
+        exit(1);
+    }
     pBufferSize = ( int *)( ( char *) buffer + 2 * sizeof(int) );
 
     int *pPeopleAmount = (int *)((char *)buffer + sizeof(int));
@@ -183,7 +189,7 @@ void* Search( void *buffer ) {
     printf("  Pesquisar (NOME): ");
     scanf(" %49[^\n]", pSearched);
    
-    char *pData = (char *) buffer + (3 * sizeof(int)); // aponta pro primeiro dado após meus contadores 
+    char *pData = (char *) buffer + (3 * sizeof(int));
     
     while ( *pCount < *pPeopleAmount ) {
 
@@ -213,6 +219,12 @@ void* Search( void *buffer ) {
 
             *pCount = 0;
             buffer = realloc(buffer, *pBufferSize);
+            if ( !buffer ) {
+                printf(" \n ERRO DE ALOCACAO \n");
+                exit(1);
+            }
+            pBufferSize = ( int *)( ( char *) buffer + 2 * sizeof(int) );
+
             return buffer;
         }
         (*pCount)++;
@@ -221,6 +233,11 @@ void* Search( void *buffer ) {
 
     *pCount = 0;
     buffer = realloc(buffer, *pBufferSize);
+     if ( !buffer ) {
+                printf(" \n ERRO DE ALOCACAO \n");
+                exit(1);
+            }
+    pBufferSize = ( int *)( ( char *) buffer + 2 * sizeof(int) );
     return buffer;
 }       
 
@@ -233,6 +250,10 @@ void* Remove_People( void *buffer ){
         }
 
     buffer = realloc(buffer, *pBufferSize + sizeof(char) * 54 );
+    if ( !buffer ) {
+        printf(" \n ERRO DE ALOCACAO \n");
+        exit(1);
+    }
     pBufferSize = ( int *)( ( char *) buffer + 2 * sizeof(int) );
 
 
@@ -273,6 +294,11 @@ void* Remove_People( void *buffer ){
 
             *pCount = 0;
             buffer = realloc(buffer, *pBufferSize );
+            if ( !buffer ) {
+                printf(" \n ERRO DE ALOCACAO \n");
+                exit(1);
+            }
+            pBufferSize = ( int *)( ( char *) buffer + 2 * sizeof(int) );
             printf("\n Pessoa removida com sucesso!\n");
             return buffer;
             
@@ -281,7 +307,14 @@ void* Remove_People( void *buffer ){
 }
     printf("\n Pessoa nao encontrada!\n");
     *pCount = 0;
+
     buffer = realloc(buffer, *pBufferSize );
+    if ( !buffer ) {
+        printf(" \n ERRO DE ALOCACAO \n");
+        exit(1);
+    }
+    pBufferSize = ( int *)( ( char *) buffer + 2 * sizeof(int) );
+    
     return buffer;
 }
  
