@@ -60,7 +60,7 @@ int Menu(void *buffer) {
         printf("\n Escolha uma opcao: ");
         scanf("%d", p);
         if (*p < 1 || *p > 5) {
-            printf("\n ***OPCAO INVALIDA*** \n");
+            printf("\n **OPCAO INVALIDA** \n");
         }
     } while (*p < 1 || *p > 5);
 
@@ -71,7 +71,7 @@ void* Add_People(void *buffer) {
     int *pBufferSize = (int *)((char *)buffer + 2 * sizeof(int));
     buffer = realloc(buffer, *pBufferSize + (sizeof(char) * 200) + (sizeof(int) * 3));
     if (!buffer) {
-        printf(" \n ERRO DE ALOCACAO \n");
+        printf(" \n **ERRO DE ALOCACAO** \n");
         exit(1);
     }
 
@@ -104,7 +104,7 @@ void* Add_People(void *buffer) {
 
     buffer = realloc(buffer, *pBufferSize);
     if (!buffer) {
-        printf(" \n ERRO DE ALOCACAO \n");
+        printf(" \n **ERRO DE ALOCACAO** \n");
         exit(1);
     }
 
@@ -121,7 +121,7 @@ void* Remove_People(void *buffer) {
 
     buffer = realloc(buffer, *pBufferSize + sizeof(char) * 104);
     if (!buffer) {
-        printf(" \n ERRO DE ALOCACAO \n");
+        printf(" \n **ERRO DE ALOCACAO** \n");
         exit(1);
     }
 
@@ -135,10 +135,9 @@ void* Remove_People(void *buffer) {
     scanf(" %99[^\n]", pRemoved);
 
     char *pData = (char *)buffer + (3 * sizeof(int));
-    char *pPreviousData = pData;
 
     while (*pCount < *pPeopleAmount) {
-        pPreviousData = pData;
+        char *pPreviousData = pData;
 
         int *pNameSize = (int *)pData;
         pData += sizeof(int);
@@ -160,7 +159,7 @@ void* Remove_People(void *buffer) {
 
             buffer = realloc(buffer, *pBufferSize);
             if (!buffer) {
-                printf(" \n ERRO DE ALOCACAO \n");
+                printf(" \n **ERRO DE ALOCACAO** \n");
                 exit(1);
             }
 
@@ -177,7 +176,7 @@ void* Remove_People(void *buffer) {
 
     buffer = realloc(buffer, *pBufferSize);
     if (!buffer) {
-        printf(" \n ERRO DE ALOCACAO \n");
+        printf(" \n **ERRO DE ALOCACAO** \n");
         exit(1);
     }
 
@@ -194,7 +193,7 @@ void* Search_People(void *buffer) {
 
     buffer = realloc(buffer, *pBufferSize + sizeof(char) * 100);
     if (!buffer) {
-        printf(" \n ERRO DE ALOCACAO \n");
+        printf(" \n **ERRO DE ALOCACAO** \n");
         exit(1);
     }
 
@@ -234,7 +233,7 @@ void* Search_People(void *buffer) {
             *pCount = 0;
             buffer = realloc(buffer, *pBufferSize);
             if (!buffer) {
-                printf(" \n ERRO DE ALOCACAO \n");
+                printf(" \n **ERRO DE ALOCACAO** \n");
                 exit(1);
             }
 
@@ -250,7 +249,7 @@ void* Search_People(void *buffer) {
 
     buffer = realloc(buffer, *pBufferSize);
     if (!buffer) {
-        printf(" \n ERRO DE ALOCACAO \n");
+        printf(" \n **ERRO DE ALOCACAO** \n");
         exit(1);
     }
 
